@@ -1,0 +1,255 @@
+/* Zeichenwerkstatt – Design „Werkbank“ */
+:root{
+  color-scheme:light;
+  --bg:#F2EEE6; --paper:#FBF9F4; --ink:#23262B; --mute:#6E6A62; --soft:#D9D3C7;
+  --acc:#E0552B; --acc-bg:#FCE7DE;
+  --ok:#2E7A57; --ok-bg:#E3F0E8;
+  --bad:#C2412A; --bad-bg:#FBE5DE;
+  --info-bg:#EDEAE2;
+  --grid:rgba(35,38,43,.06);
+  --head:"Barlow Condensed",system-ui,sans-serif;
+  --body:"Atkinson Hyperlegible",system-ui,sans-serif;
+  --bar-h:64px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{
+  background:var(--bg);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:20px 20px;
+  color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.4;
+  -webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%;
+  overscroll-behavior:none;
+}
+button{font:inherit;color:inherit}
+h1,h2,h3{margin:0}
+p{margin:0}
+.app{min-height:100dvh;display:flex;flex-direction:column}
+.noselect,.app{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+input{-webkit-user-select:text;user-select:text}
+
+/* ---------- Buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:9px 16px;
+  border:1.5px solid var(--ink);background:var(--paper);color:var(--ink);cursor:pointer;font-size:17px;
+  box-shadow:3px 3px 0 var(--ink);transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.btn.primary{background:var(--ink);color:var(--paper)}
+.btn.acc{background:var(--acc);border-color:var(--ink);color:#fff}
+.btn.flat{box-shadow:none}
+.btn.small{min-height:38px;padding:6px 12px;font-size:15px}
+.btn[disabled]{opacity:.45;pointer-events:none}
+.btn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ---------- Startseite ---------- */
+.home{flex:1;display:flex;flex-direction:column;max-width:1200px;width:100%;margin:0 auto}
+.home .top{display:flex;align-items:center;gap:20px;padding:max(24px,env(safe-area-inset-top)) 28px 16px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:14px;flex:1;min-width:260px}
+.logo{width:54px;height:54px;border:2px solid var(--ink);display:grid;place-items:center;background:var(--paper);flex:none}
+.logo svg{width:36px;height:36px;fill:none;stroke:var(--ink);stroke-width:2}
+.brand h1{font-family:var(--head);font-weight:700;font-size:40px;line-height:1;text-transform:uppercase;letter-spacing:.01em}
+.brand p{color:var(--mute);font-size:15px;margin-top:4px}
+.mode{display:flex;align-items:center;gap:0;font-size:14px;color:var(--mute)}
+.mode span{margin-right:8px}
+.mode button{border:1.5px solid var(--ink);background:var(--paper);padding:8px 14px;cursor:pointer;min-height:40px}
+.mode button+button{border-left:0}
+.mode button.on{background:var(--ink);color:var(--paper)}
+.pass{font-family:var(--head);font-size:19px;border:1.5px solid var(--ink);padding:6px 12px;background:var(--paper);cursor:pointer}
+.pass b{font-size:28px;color:var(--acc)}
+.grid9{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:6px 28px 20px}
+.card{position:relative;display:flex;flex-direction:column;background:var(--paper);border:1.5px solid var(--ink);cursor:pointer;min-height:170px;text-align:left;padding:0;transition:transform .1s, box-shadow .1s}
+.card:active{transform:translate(2px,2px)}
+.card:hover{box-shadow:4px 4px 0 var(--ink)}
+.card-head{display:flex;align-items:stretch;border-bottom:1.5px solid var(--ink);font-family:var(--head);font-weight:600}
+.card-head .num{padding:4px 10px;border-right:1.5px solid var(--ink);font-size:19px}
+.card-head .tag{padding:4px 10px;flex:1;text-align:right;text-transform:uppercase;letter-spacing:.06em;color:var(--mute);font-size:16px;align-self:center}
+.card .ico{width:48px;height:48px;margin:12px 16px 6px;color:var(--ink)}
+.card h3{font-family:var(--head);font-weight:600;font-size:25px;line-height:1.05;margin:0 16px}
+.card .foot{margin:auto 16px 12px;padding-top:8px;display:flex;justify-content:space-between;color:var(--mute);font-size:14px}
+.card .stars{color:var(--acc);letter-spacing:2px;font-size:16px}
+.ico svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.stamp{position:absolute;right:14px;top:50px;transform:rotate(-12deg);border:2.5px solid var(--acc);color:var(--acc);font-family:var(--head);font-weight:700;font-size:18px;letter-spacing:.12em;padding:2px 10px;border-radius:4px;opacity:.92;background:rgba(251,249,244,.6)}
+.card.started .tag{color:var(--acc)}
+.home .bottom{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:0 28px max(20px,env(safe-area-inset-bottom));color:var(--mute);font-size:14px;flex-wrap:wrap}
+.linkbtn{background:none;border:0;color:var(--mute);text-decoration:underline;cursor:pointer;padding:8px 0;font-size:14px}
+.banner{margin:0 28px 14px;padding:14px 18px;border:1.5px solid var(--ink);background:var(--acc-bg);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.banner b{font-family:var(--head);font-size:24px;text-transform:uppercase}
+
+@media (max-width:900px){.grid9{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:560px){.grid9{grid-template-columns:1fr;padding:6px 16px 20px}.home .top{padding:20px 16px 12px}.brand h1{font-size:32px}}
+
+/* ---------- Stationsrahmen ---------- */
+.station{height:100dvh;display:flex;flex-direction:column;min-height:0}
+.bar{display:flex;align-items:center;gap:16px;padding:10px 20px;padding-top:max(10px,env(safe-area-inset-top));min-height:var(--bar-h);border-bottom:1.5px solid var(--ink);background:var(--paper);position:sticky;top:0;z-index:5}
+.bar .crumb{flex:1;display:flex;align-items:center;gap:12px;font-family:var(--head);font-weight:600;font-size:26px;text-transform:uppercase;min-width:0}
+.bar .crumb .num{border:1.5px solid var(--ink);padding:0 8px;flex:none}
+.bar .crumb .t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.steps{display:flex;gap:6px}
+.steps i{width:28px;height:7px;background:var(--soft);display:block}
+.steps i.on{background:var(--acc)}
+.steps i.now{background:var(--ink)}
+.st-body{flex:1;display:flex;flex-direction:column;padding:16px 20px 20px;gap:14px;min-height:0;overflow:hidden}
+.side{overflow:auto}
+.task{display:flex;gap:12px;align-items:flex-start;font-size:18px}
+.task .lbl{font-family:var(--head);font-weight:600;font-size:15px;text-transform:uppercase;letter-spacing:.08em;border:1.5px solid var(--ink);padding:2px 8px;background:var(--paper);flex:none;margin-top:1px}
+.split{flex:1;display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:18px;min-height:0}
+.split.wide-side{grid-template-columns:minmax(0,1fr) 360px}
+.split.left-side{grid-template-columns:300px minmax(0,1fr)}
+.side{display:flex;flex-direction:column;gap:10px;min-width:0}
+.side .lbl,.kicker{font-family:var(--head);font-weight:600;font-size:15px;text-transform:uppercase;letter-spacing:.08em;color:var(--mute)}
+.sheet{position:relative;background:var(--paper);border:1.5px solid var(--ink);min-height:0;overflow:hidden}
+.sheet>svg{display:block;width:100%;height:100%}
+.box{background:var(--paper);border:1.5px solid var(--ink);padding:14px 16px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.grow{flex:1}
+.center{display:flex;align-items:center;justify-content:center}
+.muted{color:var(--mute)}
+@media (max-width:900px){.st-body{overflow:auto}.sheet{min-height:360px}}
+@media (max-width:900px){
+  .split,.split.wide-side,.split.left-side{grid-template-columns:1fr}
+  .bar .crumb{font-size:21px}
+  .steps i{width:16px}
+}
+
+/* ---------- Lern-Karten ---------- */
+.rules{display:flex;flex-direction:column;gap:6px}
+.rule{display:flex;gap:10px;align-items:flex-start;padding:7px 12px;border:1.5px solid var(--ink);background:var(--paper);cursor:pointer;text-align:left;font-size:15px;line-height:1.35}
+.rule .rn{display:block;font-size:16px;font-weight:700}
+.rule .n{font-family:var(--head);font-weight:700;font-size:18px;border:1.5px solid var(--ink);min-width:28px;text-align:center;flex:none}
+.rule.on{background:var(--acc-bg);border-color:var(--acc)}
+.rule.on .n{background:var(--acc);border-color:var(--acc);color:#fff}
+
+/* ---------- Begriffe (Drag & Drop) ---------- */
+.chips{display:flex;flex-direction:column;gap:10px}
+.chips.wrap{flex-direction:row;flex-wrap:wrap}
+.chip{font-size:17px;padding:11px 14px;background:var(--paper);border:1.5px solid var(--ink);box-shadow:3px 3px 0 var(--ink);cursor:grab;touch-action:none;transition:opacity .15s, transform .1s}
+.chip.sel{background:var(--ink);color:var(--paper)}
+.chip.dragging{opacity:.3}
+.chip.used{opacity:.25;box-shadow:none;pointer-events:none;text-decoration:line-through}
+.chip.ghost{position:fixed;z-index:50;pointer-events:none;transform:translate(-50%,-60%) rotate(-2deg);box-shadow:5px 5px 0 var(--ink)}
+.shake{animation:shake .4s}
+@keyframes shake{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+
+/* SVG-Zeichnungen */
+svg .wp{fill:none;stroke:var(--ink);stroke-width:3.2;stroke-linejoin:miter}
+svg .thin{fill:none;stroke:var(--ink);stroke-width:1.2}
+svg .ah{fill:var(--ink);stroke:none}
+svg .dim{fill:var(--ink);font-family:var(--body);font-size:15px}
+svg .lead{stroke:var(--mute);stroke-width:1;fill:none}
+svg .dot{fill:var(--mute)}
+svg .slot{fill:var(--paper);stroke:var(--mute);stroke-width:1.5;stroke-dasharray:5 4;cursor:pointer}
+svg .slot.over{stroke:var(--acc);stroke-width:2.5;stroke-dasharray:none;fill:var(--acc-bg)}
+svg .slot.ok{fill:var(--ok-bg);stroke:var(--ok);stroke-dasharray:none;stroke-width:2}
+svg .slot.bad{fill:var(--bad-bg);stroke:var(--bad);stroke-dasharray:none;stroke-width:2}
+svg .slottxt{font-family:var(--body);font-size:15px;text-anchor:middle;dominant-baseline:central;fill:var(--ink);pointer-events:none}
+svg .slottxt.ok{fill:var(--ok);font-weight:700}
+svg .hlg *{transition:stroke .2s, fill .2s}
+svg .hlg.on .wp,svg .hlg.on .thin{stroke:var(--acc)}
+svg .hlg.on .ah,svg .hlg.on .dim{fill:var(--acc)}
+svg .hlg.on .wp{stroke-width:4.5}
+svg .hlg.on .thin{stroke-width:2.4}
+svg .hlg.on .dim{font-weight:700}
+
+/* ---------- Rückmeldung ---------- */
+.fbk{position:fixed;right:16px;bottom:max(16px,env(safe-area-inset-bottom));width:min(440px,calc(100% - 32px));z-index:30;
+  background:var(--paper);border:1.5px solid var(--ink);border-left-width:7px;box-shadow:5px 5px 0 var(--ink);padding:14px 44px 14px 16px;font-size:16px;line-height:1.4;
+  transform:translateY(20px);opacity:0;pointer-events:none;transition:opacity .2s, transform .2s;max-height:60vh;overflow:auto}
+.fbk.show{opacity:1;transform:none;pointer-events:auto}
+.fbk b.t{display:block;font-family:var(--head);font-weight:700;font-size:21px;text-transform:uppercase;letter-spacing:.02em;margin-bottom:4px}
+.fbk.ok{border-left-color:var(--ok)} .fbk.ok b.t{color:var(--ok)}
+.fbk.bad{border-left-color:var(--bad)} .fbk.bad b.t{color:var(--bad)}
+.fbk.info{border-left-color:var(--ink)}
+.fbk ul{margin:6px 0 0;padding-left:20px}
+.fbk li{margin:4px 0}
+.fbk .x{position:absolute;right:8px;top:8px;width:32px;height:32px;border:0;background:none;font-size:22px;cursor:pointer;color:var(--mute)}
+.fbk .acts{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+
+.toast{position:fixed;left:50%;top:calc(var(--bar-h) + 14px);transform:translate(-50%,-10px);background:var(--ink);color:var(--paper);padding:10px 16px;font-size:15px;z-index:60;opacity:0;pointer-events:none;transition:opacity .2s, transform .2s;max-width:calc(100% - 32px)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* ---------- Geschafft ---------- */
+.done-ov{position:fixed;inset:0;background:rgba(35,38,43,.5);z-index:70;display:grid;place-items:center;padding:16px}
+.done-card{background:var(--paper);border:2px solid var(--ink);box-shadow:8px 8px 0 var(--ink);padding:28px 30px 24px;max-width:460px;width:100%;text-align:center;position:relative}
+.done-card h2{font-family:var(--head);font-weight:700;font-size:34px;text-transform:uppercase}
+.done-card p{margin:10px 0 18px;font-size:17px}
+.done-card .big-stamp{display:inline-block;margin:6px 0 14px;border:4px solid var(--acc);color:var(--acc);font-family:var(--head);font-weight:700;font-size:40px;letter-spacing:.14em;padding:4px 20px;border-radius:6px;transform:rotate(-8deg);animation:stampin .45s cubic-bezier(.2,1.6,.4,1) both}
+.done-card .stars{font-size:34px;color:var(--acc);letter-spacing:6px}
+.done-card .stars .off{color:var(--soft)}
+@keyframes stampin{0%{transform:rotate(-8deg) scale(2.4);opacity:0}100%{transform:rotate(-8deg) scale(1);opacity:1}}
+
+/* ---------- Zeichenfläche ---------- */
+.pad{position:relative;flex:1;min-height:240px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.pad-stage{position:relative;background:var(--paper);border:1.5px solid var(--ink);flex:none}
+.pad-stage>svg,.pad-stage>canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.pad-stage>canvas{touch-action:none;cursor:crosshair}
+.pad-ov{pointer-events:none}
+.toolbar{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.toolbar .sep{width:1px;align-self:stretch;background:var(--soft);margin:0 4px}
+.tb{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-width:58px;min-height:52px;padding:4px 8px;border:1.5px solid var(--ink);background:var(--paper);cursor:pointer;font-size:12px;line-height:1}
+.tb svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.tb.on{background:var(--ink);color:var(--paper)}
+.tb.style svg{width:40px;height:18px;stroke-linecap:butt}
+.tb.warn{background:var(--bad-bg);border-color:var(--bad);color:var(--bad)}
+
+/* ---------- Sortieren (Station 1) ---------- */
+.sortwrap{flex:1;display:flex;flex-direction:column;gap:16px;min-height:0}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.duo figure{margin:0;background:var(--paper);border:1.5px solid var(--ink);padding:8px 12px 10px}
+.duo figcaption{font-family:var(--head);font-weight:600;font-size:20px;text-transform:uppercase}
+.duo svg{width:100%;height:150px;display:block}
+.deck{display:flex;justify-content:center;align-items:center;min-height:120px}
+.scard{max-width:520px;width:100%;font-size:22px;line-height:1.3;text-align:center;padding:22px 26px;background:var(--paper);border:2px solid var(--ink);box-shadow:5px 5px 0 var(--ink);touch-action:none;cursor:grab;position:relative}
+.scard small{position:absolute;left:10px;top:6px;font-size:13px;color:var(--mute)}
+.bins{display:grid;grid-template-columns:1fr 0.7fr 1fr;gap:14px}
+.bin{min-height:120px;border:2px dashed var(--mute);background:rgba(251,249,244,.7);padding:10px 12px;display:flex;flex-direction:column;gap:6px;cursor:pointer;text-align:left}
+.bin h4{margin:0;font-family:var(--head);font-weight:700;font-size:22px;text-transform:uppercase}
+.bin.over{border-color:var(--acc);border-style:solid;background:var(--acc-bg)}
+.bin ul{margin:0;padding-left:18px;font-size:14px;color:var(--mute)}
+@media (max-width:700px){.bins{grid-template-columns:1fr}.duo{grid-template-columns:1fr}}
+
+/* ---------- Quiz ---------- */
+.quiz{max-width:720px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+.quiz .q{font-size:22px;line-height:1.3}
+.opts{display:grid;gap:10px}
+.opt{text-align:left;padding:14px 16px;border:1.5px solid var(--ink);background:var(--paper);cursor:pointer;font-size:18px;box-shadow:3px 3px 0 var(--ink)}
+.opt.ok{background:var(--ok-bg);border-color:var(--ok);box-shadow:3px 3px 0 var(--ok)}
+.opt.bad{background:var(--bad-bg);border-color:var(--bad);box-shadow:3px 3px 0 var(--bad)}
+.expl{padding:12px 14px;background:var(--info-bg);border-left:5px solid var(--ink);font-size:16px}
+
+/* ---------- Messen ---------- */
+.inputs{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+.inp{display:flex;align-items:center;gap:6px;border:1.5px solid var(--ink);background:var(--paper);padding:4px 8px}
+.inp b{font-family:var(--head);font-size:24px;width:20px}
+.inp input{width:100%;min-width:0;border:0;background:transparent;font:inherit;font-size:22px;padding:6px 2px;outline:none}
+.inp span{color:var(--mute)}
+.inp.ok{border-color:var(--ok);background:var(--ok-bg)}
+.inp.bad{border-color:var(--bad);background:var(--bad-bg)}
+.numpad-ov{position:fixed;inset:0;background:rgba(35,38,43,.35);z-index:65;display:grid;place-items:center;padding:16px}
+.numpad{background:var(--paper);border:2px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px;width:300px}
+.numpad .disp{font-size:34px;border:1.5px solid var(--ink);padding:6px 12px;text-align:right;min-height:58px;margin:8px 0 12px;font-family:var(--body)}
+.numpad .keys{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.numpad .keys button{min-height:54px;font-size:24px;border:1.5px solid var(--ink);background:var(--bg);cursor:pointer}
+.numpad .keys button.ok{background:var(--ink);color:var(--paper)}
+
+/* ---------- Normschrift ---------- */
+.marks{display:flex}
+
+/* ---------- Urkunde ---------- */
+.cert{max-width:720px;margin:24px auto;padding:30px;background:var(--paper);border:2px solid var(--ink);box-shadow:8px 8px 0 var(--ink);text-align:center}
+.cert h2{font-family:var(--head);font-size:44px;text-transform:uppercase}
+.cert .name{font-size:28px;border:0;border-bottom:2px solid var(--ink);background:transparent;text-align:center;width:min(420px,100%);padding:6px;margin:18px 0;font-family:var(--body)}
+.cert .stamps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0}
+.cert .stamps div{border:1.5px solid var(--ink);padding:10px;font-family:var(--head);font-size:18px;text-transform:uppercase;position:relative;min-height:64px}
+.cert .stamps div.got::after{content:"GEPRÜFT";position:absolute;right:6px;bottom:6px;transform:rotate(-10deg);border:2px solid var(--acc);color:var(--acc);font-size:13px;padding:0 6px;letter-spacing:.1em}
+@media print{.bar,.noprint{display:none!important}body{background:#fff}.cert{box-shadow:none}}
+.ghost{position:fixed;z-index:50;pointer-events:none;transform:translate(-50%,-60%) rotate(-2deg);box-shadow:5px 5px 0 var(--ink)}
+.scard.sel{outline:3px solid var(--acc);outline-offset:3px}
+.scard.dragging{opacity:.3}
+.dimg.erasable{cursor:pointer}
+.dimg.erasable .thin{stroke:var(--bad)}
+/* iPad hochkant: Vorlage schmal links, Zeichenfläche groß rechts */
+@media (max-width:900px) and (min-width:700px){
+  .split.left-side{grid-template-columns:minmax(0,32%) minmax(0,1fr)}
+  .split.left-side>.sheet{min-height:0}
+  .st-body{overflow:hidden}
+  .split{grid-template-columns:minmax(0,1fr) 240px}
+}
