@@ -50,7 +50,8 @@ export function labeling(host, side, ctx, opts) {
         shake(chipEl);
         setTimeout(() => { if (!filled[slotId]) { rect.setAttribute('class', 'slot'); txt.textContent = ''; } }, 1300);
         ctx.feedback({ kind: 'bad', title: 'Noch nicht ganz',
-          text: `Hier zeigt die Linie auf <b>${slot.desc}</b>.<br>${chip.label}: ${chip.rule}` });
+          text: `Hier zeigt die Linie auf <b>${slot.desc}</b>.<br>${chip.label}: ${chip.rule}`,
+          easy: `Schau genau hin: Die Linie zeigt auf ${slot.easy || slot.desc}.<br><b>${chip.label}</b> bedeutet: ${chip.easy || chip.rule}<br>Passt das zusammen? Wenn nicht, probier einen anderen Begriff.` });
       }
     },
   });

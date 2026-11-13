@@ -3,21 +3,27 @@ import { techDrawing } from '../drawings.js';
 import { labeling } from '../label.js';
 
 const RULES = [
-  ['kante', 'Werkstückkante', 'Die sichtbaren Kanten des Werkstücks. Sie werden immer <b>breit</b> (dick) gezeichnet.'],
-  ['hilfs', 'Maßhilfslinie', 'Verlängert eine Werkstückkante nach außen. Die Maße stehen meist <b>außerhalb</b> des Werkstücks.'],
-  ['linie', 'Maßlinie', 'Liegt zwischen zwei Maßhilfslinien, parallel zur bemaßten Kante – <b>10 mm</b> von der Kante entfernt, jede weitere <b>7 mm</b> weiter.'],
-  ['pfeil', 'Maßpfeil', 'Sitzt an den Enden der Maßlinie und zeigt auf die Maßhilfslinie. Die Spitze wird <b>ausgemalt</b>.'],
-  ['zahl', 'Maßzahl', 'Steht in der <b>Mitte über</b> der Maßlinie, in Normschrift. Angabe in Millimetern – „mm“ schreibt man nicht dazu.'],
-  ['dicke', 'Werkstückdicke', 'Wird <b>in</b> das Werkstück geschrieben, mit einem kleinen <b>t</b> – zum Beispiel t=2 (in mm).'],
+  ['kante', 'Werkstückkante', 'Die sichtbaren Kanten des Werkstücks. Sie werden immer <b>breit</b> (dick) gezeichnet.',
+    'der <b>dicke Rand</b> vom Werkstück – also das, was man vom Teil selbst sieht.'],
+  ['hilfs', 'Maßhilfslinie', 'Verlängert eine Werkstückkante nach außen. Die Maße stehen meist <b>außerhalb</b> des Werkstücks.',
+    'eine <b>dünne Linie</b>, die vom Werkstück <b>nach außen</b> weitergeht. Sie „hilft“, das Maß außen hinzuschreiben.'],
+  ['linie', 'Maßlinie', 'Liegt zwischen zwei Maßhilfslinien, parallel zur bemaßten Kante – <b>10 mm</b> von der Kante entfernt, jede weitere <b>7 mm</b> weiter.',
+    'die dünne Linie <b>mit den Pfeilen an den Enden</b>. Sie zeigt, von wo bis wo gemessen wurde.'],
+  ['pfeil', 'Maßpfeil', 'Sitzt an den Enden der Maßlinie und zeigt auf die Maßhilfslinie. Die Spitze wird <b>ausgemalt</b>.',
+    'die kleine <b>schwarze Spitze</b> ganz am Ende der Maßlinie.'],
+  ['zahl', 'Maßzahl', 'Steht in der <b>Mitte über</b> der Maßlinie, in Normschrift. Angabe in Millimetern – „mm“ schreibt man nicht dazu.',
+    'die <b>Zahl</b>, die über der Maßlinie steht. Sie sagt, wie lang etwas ist.'],
+  ['dicke', 'Werkstückdicke', 'Wird <b>in</b> das Werkstück geschrieben, mit einem kleinen <b>t</b> – zum Beispiel t=2 (in mm).',
+    'wie <b>dick</b> das Teil ist. Man schreibt es mit einem kleinen <b>t</b> mitten ins Werkstück.'],
 ];
 
 const SLOTS = [
-  { id: 'kante', x: 18, y: 206, w: 150, lead: [247, 212], answer: 'kante', desc: 'eine dick gezeichnete Kante des Werkstücks' },
-  { id: 'dicke', x: 18, y: 286, w: 150, lead: [242, 296], answer: 'dicke', desc: 'die Angabe „t=2“ im Werkstück' },
-  { id: 'hilfs', x: 430, y: 30, w: 150, lead: [380, 140], answer: 'hilfs', desc: 'eine dünne Linie, die eine Werkstückkante nach außen verlängert' },
-  { id: 'pfeil', x: 530, y: 96, w: 150, lead: [560, 188], answer: 'pfeil', desc: 'die ausgemalte Spitze am Ende einer Maßlinie' },
-  { id: 'linie', x: 40, y: 420, w: 150, lead: [250, 386], answer: 'linie', desc: 'die dünne Linie mit Pfeilen zwischen zwei Maßhilfslinien' },
-  { id: 'zahl', x: 330, y: 420, w: 150, lead: [318, 362], answer: 'zahl', desc: 'die Zahl 51' },
+  { id: 'kante', x: 18, y: 206, w: 150, lead: [247, 212], answer: 'kante', desc: 'eine dick gezeichnete Kante des Werkstücks', easy: 'eine <b>dicke Linie</b> am Rand des Teils' },
+  { id: 'dicke', x: 18, y: 286, w: 150, lead: [242, 296], answer: 'dicke', desc: 'die Angabe „t=2“ im Werkstück', easy: 'das <b>„t=2“</b> mitten im Teil' },
+  { id: 'hilfs', x: 430, y: 30, w: 150, lead: [380, 140], answer: 'hilfs', desc: 'eine dünne Linie, die eine Werkstückkante nach außen verlängert', easy: 'eine <b>dünne Linie</b>, die vom Teil nach außen weitergeht' },
+  { id: 'pfeil', x: 530, y: 96, w: 150, lead: [560, 188], answer: 'pfeil', desc: 'die ausgemalte Spitze am Ende einer Maßlinie', easy: 'eine <b>kleine schwarze Spitze</b>' },
+  { id: 'linie', x: 40, y: 420, w: 150, lead: [250, 386], answer: 'linie', desc: 'die dünne Linie mit Pfeilen zwischen zwei Maßhilfslinien', easy: 'eine <b>dünne Linie mit Pfeilen</b> an beiden Enden' },
+  { id: 'zahl', x: 330, y: 420, w: 150, lead: [318, 362], answer: 'zahl', desc: 'die Zahl 51', easy: 'die <b>Zahl 51</b>' },
 ];
 
 export default {
@@ -57,7 +63,7 @@ export default {
       root.append(split);
       const { sheet } = labeling(left, side, ctx, {
         drawing: techDrawing({ parts: false }), viewBox: '0 10 700 465', slots: SLOTS,
-        chips: RULES.map(([id, label, rule]) => ({ id, label, rule })),
+        chips: RULES.map(([id, label, rule, easy]) => ({ id, label, rule, easy })),
         onDone: m => ctx.complete(m === 0 ? 3 : m <= 2 ? 2 : 1, 'Alle sechs Fachbegriffe sitzen. Jetzt weißt du, woraus eine Bemaßung besteht!'),
       });
       sheet.style.flex = '1';

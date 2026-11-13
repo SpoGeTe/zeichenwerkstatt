@@ -141,15 +141,18 @@ export default {
           const v = parseFloat(raw);
           const lbl = inputs[e.k].parentElement;
           lbl.classList.remove('ok', 'bad');
-          if (!raw) { allOk = false; probs.push(`<b>${e.k}</b>: noch kein Wert.`); continue; }
+          if (!raw) { allOk = false; probs.push([`<b>${e.k}</b>: noch kein Wert.`, `<b>${e.k}</b>: Hier fehlt noch deine Zahl. Miss die Kante <b>${e.k}</b> und trag die Zahl ein.`]); continue; }
           if (Math.abs(v - e.v) <= 1) { lbl.classList.add('ok'); continue; }
           allOk = false; lbl.classList.add('bad'); wrongMeasure++;
-          if (Math.abs(v * 10 - e.v) <= 1) probs.push(`<b>${e.k}</b>: Achtung Einheit! Gib die Länge in <b>Millimetern</b> an (1 cm = 10 mm).`);
-          else probs.push(`<b>${e.k}</b>: ${v} mm stimmt nicht. Lege die <b>0</b> genau an den Anfang der Kante und lies am Ende ab.`);
+          if (Math.abs(v * 10 - e.v) <= 1) probs.push([`<b>${e.k}</b>: Achtung Einheit! Gib die Länge in <b>Millimetern</b> an (1 cm = 10 mm).`,
+            `<b>${e.k}</b>: Du hast die großen Zahlen (cm) abgelesen. Zähl die <b>kleinen Striche</b> (mm): Zwischen zwei großen Zahlen sind immer <b>10</b> kleine Striche.`]);
+          else probs.push([`<b>${e.k}</b>: ${v} mm stimmt nicht. Lege die <b>0</b> genau an den Anfang der Kante und lies am Ende ab.`,
+            `<b>${e.k}</b>: So geht Messen: 1. Schieb das Lineal so, dass die <b>0</b> genau an einer <b>Ecke</b> liegt. 2. Schau, welche Zahl an der <b>anderen Ecke</b> steht. 3. Die kleinen Striche dazwischen sind Millimeter.`]);
         }
         if (allOk) {
           ctx.feedback({ kind: 'ok', title: 'Richtig gemessen!', text: 'Alle Längen stimmen. Jetzt trägst du die Maße in die Zeichnung ein.', actions: [{ label: 'Weiter zum Bemaßen', cls: 'primary', onClick: dimension }] });
-        } else ctx.feedback({ kind: 'bad', title: 'Noch nicht alles richtig', list: probs });
+        } else ctx.feedback({ kind: 'bad', title: 'Noch nicht alles richtig', list: probs,
+          easy: 'Die <b>roten</b> Felder stimmen noch nicht. Die <b>grünen</b> sind richtig.' });
       }
     }
 
@@ -256,8 +259,10 @@ export default {
         const infos = dims.map(d => ({ d, i: info(d) }));
         // Maßzahlen
         for (const { d, i } of infos) {
-          if (d.value !== i.len) probs.push(`Die Maßzahl <b>${d.value}</b> passt nicht zur Strecke. Miss mit dem Lineal nach (in mm).`);
-          if (i.inside) probs.push(`Das Maß <b>${d.value}</b> liegt im Werkstück. Maße stehen <b>außerhalb</b>.`);
+          if (d.value !== i.len) probs.push([`Die Maßzahl <b>${d.value}</b> passt nicht zur Strecke. Miss mit dem Lineal nach (in mm).`,
+            `Die Zahl <b>${d.value}</b> ist falsch. Tippe oben auf <b>„Lineal“</b>, miss die Strecke nach und trag dann die richtige Zahl ein (vorher mit „Löschen“ wegmachen).`]);
+          if (i.inside) probs.push([`Das Maß <b>${d.value}</b> liegt im Werkstück. Maße stehen <b>außerhalb</b>.`,
+            `Das Maß <b>${d.value}</b> steht <b>im</b> Teil drin. Maße gehören immer <b>nach draußen</b>, neben das Teil.`]);
         }
         // Abstände 10 / 7 mm
         for (const { d, i } of infos) {
@@ -266,26 +271,33 @@ export default {
             Math.min(o.i.hi, i.hi) - Math.max(o.i.lo, i.lo) > 0 && o.i.dist < i.dist);
           const want = inner.length ? Math.max(...inner.map(o => o.i.dist)) + 7 : 10;
           if (Math.abs(i.dist - want) > 1) probs.push(inner.length
-            ? `Das Maß <b>${d.value}</b> liegt ${i.dist} mm vom Werkstück entfernt. Es ist die nächste Maßlinie weiter außen – also <b>7 mm</b> weiter: hier ${want} mm.`
-            : `Das Maß <b>${d.value}</b> liegt ${i.dist} mm von der Kante entfernt. Die erste Maßlinie gehört <b>10 mm</b> von der Kante weg.`);
+            ? [`Das Maß <b>${d.value}</b> liegt ${i.dist} mm vom Werkstück entfernt. Es ist die nächste Maßlinie weiter außen – also <b>7 mm</b> weiter: hier ${want} mm.`,
+               `Das Maß <b>${d.value}</b> ist schon die <b>zweite</b> Maßlinie auf dieser Seite. Sie muss <b>7 mm</b> weiter weg als die erste. Lösch sie und leg sie neu hin, bis unten „<b>${want} mm</b>“ steht.`]
+            : [`Das Maß <b>${d.value}</b> liegt ${i.dist} mm von der Kante entfernt. Die erste Maßlinie gehört <b>10 mm</b> von der Kante weg.`,
+               `Das Maß <b>${d.value}</b> liegt nicht richtig. Beim Hinlegen steht rechts „Abstand zum Werkstück“. Leg die Linie so hin, dass dort <b>10 mm</b> steht.`]);
         }
         // Vollständigkeit
         const has = (o, lo, hi) => infos.some(({ d, i }) => d.o === o && i.lo === lo && i.hi === hi);
-        if (!has('h', 0, 60)) probs.push('Es fehlt noch die <b>Gesamtbreite</b> des Werkstücks.');
-        if (!has('v', 0, 38)) probs.push('Es fehlt noch die <b>Gesamthöhe</b> des Werkstücks.');
-        if (!has('h', 12, 42)) probs.push('Es fehlt noch die <b>Breite des unteren Teils</b>.');
-        if (!has('h', 0, 12) && !has('h', 42, 60)) probs.push('Man weiß noch nicht, <b>wo</b> der untere Teil beginnt (Abstand zum Rand fehlt).');
-        if (!has('v', 0, 26) && !has('v', 26, 38)) probs.push('Es fehlt noch die <b>Höhe des oberen Teils</b> (oder des unteren).');
+        if (!has('h', 0, 60)) probs.push(['Es fehlt noch die <b>Gesamtbreite</b> des Werkstücks.', 'Es fehlt: Wie <b>breit</b> ist das ganze Teil? Tippe die Ecke ganz <b>links oben</b> und die Ecke ganz <b>rechts oben</b> an.']);
+        if (!has('v', 0, 38)) probs.push(['Es fehlt noch die <b>Gesamthöhe</b> des Werkstücks.', 'Es fehlt: Wie <b>hoch</b> ist das ganze Teil? Tippe die <b>oberste</b> und die <b>unterste</b> Ecke an.']);
+        if (!has('h', 12, 42)) probs.push(['Es fehlt noch die <b>Breite des unteren Teils</b>.', 'Es fehlt: Wie <b>breit</b> ist das <b>untere Stück</b>? Tippe die beiden Ecken ganz <b>unten</b> an.']);
+        if (!has('h', 0, 12) && !has('h', 42, 60)) probs.push(['Man weiß noch nicht, <b>wo</b> der untere Teil beginnt (Abstand zum Rand fehlt).', 'Es fehlt: Wie weit ist das untere Stück vom <b>Rand</b> weg? Miss den kleinen Absatz <b>links</b> (oder rechts).']);
+        if (!has('v', 0, 26) && !has('v', 26, 38)) probs.push(['Es fehlt noch die <b>Höhe des oberen Teils</b> (oder des unteren).', 'Es fehlt: Wie <b>hoch</b> ist das <b>obere</b> breite Stück? Tippe links die Ecke <b>oben</b> und die Ecke am <b>Absatz</b> an.']);
         infos.forEach((a, n) => infos.slice(n + 1).forEach(b => {
           if (a.d.o === b.d.o && a.d.at === b.d.at && Math.min(a.i.hi, b.i.hi) - Math.max(a.i.lo, b.i.lo) > 0)
-            probs.push(`Die Maße <b>${a.d.value}</b> und <b>${b.d.value}</b> liegen übereinander. Die äußere Maßlinie muss <b>7 mm</b> weiter weg.`);
+            probs.push([`Die Maße <b>${a.d.value}</b> und <b>${b.d.value}</b> liegen übereinander. Die äußere Maßlinie muss <b>7 mm</b> weiter weg.`,
+              `Die Maße <b>${a.d.value}</b> und <b>${b.d.value}</b> liegen <b>aufeinander</b> – so kann man sie nicht lesen. Leg das längere Maß weiter nach außen.`]);
         }));
         const keys = infos.map(({ d, i }) => d.o + i.lo + '-' + i.hi);
-        if (keys.some((k, n) => keys.indexOf(k) !== n)) probs.push('Ein Maß hast du doppelt eingetragen. Jedes Maß nur <b>einmal</b> angeben.');
+        if (keys.some((k, n) => keys.indexOf(k) !== n)) probs.push(['Ein Maß hast du doppelt eingetragen. Jedes Maß nur <b>einmal</b> angeben.', 'Ein Maß steht <b>zweimal</b> da. Lösch eins davon.']);
         if (!probs.length) {
           const st = checks <= 2 && wrongMeasure <= 1 ? 3 : checks <= 4 ? 2 : 1;
           ctx.complete(st, 'Vollständig und nach den Regeln bemaßt – damit könnte man das Werkstück jetzt bauen!');
-        } else ctx.feedback({ kind: 'bad', title: 'Noch nicht vollständig', list: [...new Set(probs)].slice(0, 6) });
+        } else {
+          const seen = new Set();
+          const list = probs.filter(([n]) => !seen.has(n) && seen.add(n)).slice(0, 6);
+          ctx.feedback({ kind: 'bad', title: 'Noch nicht vollständig', list });
+        }
       }
     }
   },

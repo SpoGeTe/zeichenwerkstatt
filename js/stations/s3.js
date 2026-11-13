@@ -85,27 +85,28 @@ export default {
         if (good >= r.need) return;
         allOk = false;
         const z = `<b>Zeile ${i + 1} (${r.name}):</b> `;
-        if (!cl.length) { probs.push(z + 'Hier fehlen noch Linien.'); return; }
-        if (cl.length && !long.length) { probs.push(z + 'Deine Linien sind zu kurz. Zieh sie fast über das ganze Feld.'); return; }
+        const P = (n, e) => probs.push([z + n, z + e]);
+        if (!cl.length) { P('Hier fehlen noch Linien.', 'In dieser Zeile ist noch nichts. Zeichne hier die Linie nach, die links als Beispiel steht.'); return; }
+        if (cl.length && !long.length) { P('Deine Linien sind zu kurz. Zieh sie fast über das ganze Feld.', 'Mach die Linie <b>länger</b> – von links bis fast ganz nach rechts im Kasten.'); return; }
         const kinds = long.map(c => c.kind);
         if ((r.kind === 'wide' || r.kind === 'thin') && kinds.includes(r.kind === 'wide' ? 'thin' : 'wide'))
-          probs.push(z + (r.kind === 'wide' ? 'Deine Linien sind schmal. Sichtbare Kanten zeichnet man mit der <b>breiten</b> Volllinie – wähle oben „breit“.' : 'Deine Linien sind breit. Bemaßungslinien zeichnet man <b>schmal</b> – wähle oben „schmal“.'));
+          (r.kind === 'wide' ? P('Deine Linien sind schmal. Sichtbare Kanten zeichnet man mit der <b>breiten</b> Volllinie – wähle oben „breit“.', 'Deine Linie ist zu <b>dünn</b>. Tippe oben auf <b>„breit“</b> und zeichne nochmal.') : P('Deine Linien sind breit. Bemaßungslinien zeichnet man <b>schmal</b> – wähle oben „schmal“.', 'Deine Linie ist zu <b>dick</b>. Tippe oben auf <b>„schmal“</b> und zeichne nochmal.'));
         else if ((r.kind === 'wide' || r.kind === 'thin') && kinds.some(k => k === 'dash' || k === 'dashdot' || k === 'unclear'))
-          probs.push(z + 'Hier gehört eine <b>durchgehende</b> Linie hin – ohne Lücken. Zieh sie mit dem Lineal in einem Zug.');
+          P('Hier gehört eine <b>durchgehende</b> Linie hin – ohne Lücken. Zieh sie mit dem Lineal in einem Zug.', 'Die Linie darf <b>keine Lücken</b> haben. Mit dem Lineal: Stift aufsetzen und in <b>einem Zug</b> nach rechts ziehen.');
         else if (r.kind === 'dash' && kinds.some(k => k === 'wide' || k === 'thin'))
-          probs.push(z + 'Das ist eine durchgehende Linie. Eine Strichlinie besteht aus <b>vielen kurzen Strichen</b> mit kleinen Lücken.');
+          P('Das ist eine durchgehende Linie. Eine Strichlinie besteht aus <b>vielen kurzen Strichen</b> mit kleinen Lücken.', 'Hier brauchst du <b>Lücken</b>: kurzer Strich, Lücke, kurzer Strich, Lücke … wie – – – –');
         else if (r.kind === 'dash' && kinds.includes('dashdot'))
-          probs.push(z + 'Bei der Strichlinie gibt es <b>keine Punkte</b> – nur kurze Striche.');
+          P('Bei der Strichlinie gibt es <b>keine Punkte</b> – nur kurze Striche.', 'Lass die Punkte weg. Hier nur <b>kurze Striche</b> mit Lücken.');
         else if (r.kind === 'dashdot' && kinds.includes('dash'))
-          probs.push(z + 'Zwischen den langen Strichen fehlen die <b>Punkte</b>. Tippe kurz zwischen zwei Striche.');
+          P('Zwischen den langen Strichen fehlen die <b>Punkte</b>. Tippe kurz zwischen zwei Striche.', 'Es fehlen die <b>Punkte</b>. Mach immer: langer Strich, dann einmal kurz <b>tippen</b> (Punkt), dann wieder langer Strich.');
         else if (r.kind === 'dashdot' && kinds.some(k => k === 'wide' || k === 'thin'))
-          probs.push(z + 'Die Strichpunktlinie wechselt ab: <b>langer Strich – Punkt – langer Strich</b>.');
+          P('Die Strichpunktlinie wechselt ab: <b>langer Strich – Punkt – langer Strich</b>.', 'Die Linie braucht <b>Lücken und Punkte</b>: — · — · —');
         else if (good > 0)
-          probs.push(z + `Schon ${good} richtig – zeichne noch ${r.need - good} weitere.`);
+          P(`Schon ${good} richtig – zeichne noch ${r.need - good} weitere.`, `Gut so! Es fehlen nur noch <b>${r.need - good}</b> Linien von dieser Sorte.`);
         else
-          probs.push(z + 'Schau dir das Muster links noch einmal genau an und zeichne es nach.');
+          P('Schau dir das Muster links noch einmal genau an und zeichne es nach.', 'Schau dir die Beispiel-Linie <b>links</b> an: Ist sie dick oder dünn? Hat sie Lücken oder Punkte? Mach es genauso.');
       });
-      if (pad.strokes.some(s => s.type === 'free') && !allOk) probs.push('Tipp: Mit dem <b>Lineal</b>-Werkzeug werden deine Striche ganz gerade.');
+      if (pad.strokes.some(s => s.type === 'free') && !allOk) probs.push(['Tipp: Mit dem <b>Lineal</b>-Werkzeug werden deine Striche ganz gerade.', 'Tipp: Tippe oben auf <b>„Lineal“</b>. Dann werden deine Linien von selbst gerade.']);
       if (allOk) {
         ctx.complete(checks === 1 ? 3 : checks <= 3 ? 2 : 1, 'Alle vier Linienarten sitzen. Merke: <b>breit</b> = sichtbare Kante, <b>schmal</b> = Maße, <b>Striche</b> = unsichtbare Kante, <b>Strich-Punkt</b> = Mitte.');
       } else {

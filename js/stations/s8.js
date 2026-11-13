@@ -107,9 +107,24 @@ export default {
         return;
       }
       const todo = res.filter(r => r.st !== 'ok');
+      const EZ = {
+        'fehlt noch': 'hier hast du noch <b>nichts</b> geschrieben.',
+        'ein Stück der Linie fehlt noch': 'fahr die <b>ganze graue Linie</b> nach – ein Stück ist noch grau.',
+        'etwas neben der Vorlage': 'bleib genauer <b>auf der grauen Linie</b>.',
+        'ein großer Teil fehlt': 'da fehlt noch viel. Fahr <b>alle grauen Linien</b> nach.',
+        'zu weit neben der Vorlage': 'du bist <b>neben</b> der grauen Linie. Fahr genau darauf.',
+        'zu klein – schreibe von Linie zu Linie': 'schreib <b>größer</b>: oben die gestrichelte Linie berühren, unten auch.',
+        'ein Teil des Zeichens fehlt noch – vergleiche mit der Vorlage oben': 'schau das Zeichen <b>oben</b> an. Da ist noch ein Strich mehr.',
+        'die Form weicht etwas ab': 'fast! Schau oben, wie das Zeichen <b>genau</b> aussieht.',
+        'sieht noch anders aus als die Vorlage oben': 'das sieht noch anders aus. Schau genau auf das Zeichen <b>darüber</b> und schreib es ab.',
+      };
       ctx.feedback({ kind: 'bad', title: `${ok} von ${n} Zeichen sind grün`,
         text: 'Grün = gut, Orange = fast, Rot = nochmal. Für das nächste Blatt dürfen keine roten Zeichen übrig sein. Mit dem Radierer kannst du einzelne Striche wegnehmen.',
-        list: todo.slice(0, 5).map(r => `<b>${r.ch}</b> (${r.ri ? 'selbst geschrieben' : 'nachgespurt'}): ${r.why}`).concat(todo.length > 5 ? [`… und ${todo.length - 5} weitere.`] : []) });
+        easy: 'Unter jedem Zeichen ist ein Punkt. <b>Grün</b> = gut. <b>Orange</b> = fast. <b>Rot</b> = bitte nochmal. Mach alle roten Zeichen nochmal – mit dem <b>Radierer</b> kannst du sie vorher wegwischen.',
+        list: todo.slice(0, 5).map(r => {
+          const lab = `<b>${r.ch}</b> (${r.ri ? 'selbst geschrieben' : 'nachgespurt'}): `;
+          return [lab + r.why, lab + (EZ[r.why] || r.why)];
+        }).concat(todo.length > 5 ? [`… und ${todo.length - 5} weitere.`] : []) });
     }
     return () => pad && pad.destroy();
   },

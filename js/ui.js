@@ -49,7 +49,8 @@ export function icon(name) { return `<svg viewBox="0 0 24 24">${ICON[name]}</svg
 
 // ---------- Rückmeldung ----------
 let fbEl = null, fbTimer = null;
-export function feedback({ kind = 'info', title = '', text = '', list = null, actions = null, auto = 0 } = {}) {
+// text/easy: normale und einfache Erklärung. Listeneinträge: 'Text' oder ['Text', 'einfacher Text'].
+export function feedback({ kind = 'info', title = '', text = '', easy = '', list = null, actions = null, auto = 0 } = {}) {
   if (!fbEl) {
     fbEl = h('div', { class: 'fbk', role: 'status', 'aria-live': 'polite' });
     document.body.append(fbEl);
@@ -57,15 +58,31 @@ export function feedback({ kind = 'info', title = '', text = '', list = null, ac
   clearTimeout(fbTimer);
   fbEl.className = 'fbk ' + kind;
   fbEl.innerHTML = '';
+  const items = (list || []).map(li => (Array.isArray(li) ? li : [li, '']));
+  const hasEasy = !!easy || items.some(([, e]) => e);
+  let simple = false;
+  const body = h('div');
+  const render = () => {
+    body.innerHTML = '';
+    if (simple) body.append(h('div', { class: 'easy-tag' }, 'Einfacher erklärt'));
+    const t = simple && easy ? easy : text;
+    if (t) body.append(h('div', { html: t }));
+    if (items.length) body.append(h('ul', {}, items.map(([n, e]) => h('li', { html: simple && e ? e : n }))));
+  };
+  render();
+  const easyBtn = hasEasy ? h('button', { class: 'btn small easy-btn', onclick: () => {
+    simple = !simple; render();
+    easyBtn.innerHTML = simple ? 'Normale Erklärung' : '<span aria-hidden="true">?</span> Einfacher erklärt';
+  }, html: '<span aria-hidden="true">?</span> Einfacher erklärt' }) : null;
+  const acts = (actions || []).map(a => h('button', { class: 'btn small ' + (a.cls || ''), onclick: () => a.onClick() }, a.label));
   fbEl.append(
     h('button', { class: 'x', 'aria-label': 'Schließen', onclick: () => hideFeedback() }, '×'),
     title ? h('b', { class: 't' }, title) : '',
-    text ? h('div', { html: text }) : '',
-    list && list.length ? h('ul', {}, list.map(li => h('li', { html: li }))) : '',
-    actions && actions.length ? h('div', { class: 'acts' }, actions.map(a => h('button', { class: 'btn small ' + (a.cls || ''), onclick: () => a.onClick() }, a.label))) : ''
+    body,
+    easyBtn || acts.length ? h('div', { class: 'acts' }, easyBtn, ...acts) : ''
   );
   requestAnimationFrame(() => fbEl.classList.add('show'));
-  if (auto) fbTimer = setTimeout(hideFeedback, auto);
+  if (auto && !hasEasy) fbTimer = setTimeout(hideFeedback, auto);
 }
 export function hideFeedback() { if (fbEl) fbEl.classList.remove('show'); }
 

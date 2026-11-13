@@ -1,5 +1,5 @@
 // Offline-Unterstützung: erst Netz, bei fehlendem WLAN der gespeicherte Stand.
-const CACHE = 'zeichenwerkstatt-v1';
+const CACHE = 'zeichenwerkstatt-v2';
 const FILES = [
   './', 'index.html', 'css/app.css', 'manifest.webmanifest', 'icon.svg', 'icon-180.png', 'icon-512.png',
   'js/main.js', 'js/state.js', 'js/ui.js', 'js/pad.js', 'js/geom.js', 'js/glyphs.js', 'js/drawings.js', 'js/label.js', 'js/gridtask.js',

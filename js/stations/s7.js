@@ -76,6 +76,14 @@ const MSG = {
   leer: 'der Pfeil ist noch nicht ganz <b>ausgemalt</b>.',
   spitze: 'die Spitze berührt die <b>Maßhilfslinie</b> nicht.',
 };
+const EASY = {
+  fehlt: 'hier ist noch <b>kein Pfeil</b>. Mal ein kleines schwarzes Dreieck an das Ende der Linie.',
+  aussen: 'der Pfeil ist auf der <b>falschen Seite</b>. Er gehört <b>zwischen</b> die beiden senkrechten Linien.',
+  lang: 'der Pfeil ist zu <b>lang</b>. Er darf nur <b>ein Kästchen</b> lang sein.',
+  breit: 'der Pfeil ist zu <b>dick</b>. Mach ihn schmal und spitz – wie eine Pfeilspitze.',
+  leer: 'der Pfeil ist innen noch <b>weiß</b>. Mal ihn ganz <b>schwarz</b> aus.',
+  spitze: 'die Spitze muss genau die <b>senkrechte Linie berühren</b>. Schieb sie ein Stück weiter.',
+};
 
 export default {
   id: 7, title: 'Die Maßpfeile', tag: 'Zeichnen', min: 10,
@@ -116,7 +124,8 @@ export default {
       const bad = res.filter(x => x.r !== 'ok');
       ctx.feedback({ kind: 'bad', title: `${ok} von 12 Pfeilen passen`,
         text: 'Die orangen Punkte zeigen, wo noch etwas fehlt. Für den Stempel brauchst du mindestens 10.',
-        list: bad.slice(0, 4).map(({ e, r }) => `<b>Linie ${e.n} ${e.side}:</b> ${MSG[r]}`).concat(bad.length > 4 ? [`… und ${bad.length - 4} weitere.`] : []) });
+        easy: 'Unter jedem Pfeil ist ein Punkt: <b>Grün</b> = gut. <b>Orange mit !</b> = da musst du nochmal ran. Du brauchst <b>10 grüne</b> Punkte.',
+        list: bad.slice(0, 4).map(({ e, r }) => [`<b>Linie ${e.n} ${e.side}:</b> ${MSG[r]}`, `<b>Linie ${e.n} ${e.side}:</b> ${EASY[r]}`]).concat(bad.length > 4 ? [`… und ${bad.length - 4} weitere.`] : []) });
     }
     return () => pad.destroy();
   },

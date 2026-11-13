@@ -253,3 +253,7 @@ svg .hlg.on .dim{font-weight:700}
   .st-body{overflow:hidden}
   .split{grid-template-columns:minmax(0,1fr) 240px}
 }
+/* Einfacher erklärt */
+.easy-btn{background:var(--acc-bg);border-color:var(--acc);color:var(--ink);box-shadow:3px 3px 0 var(--acc)}
+.easy-btn span{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--acc);color:#fff;font-weight:700;font-size:14px}
+.easy-tag{display:inline-block;font-family:var(--head);font-weight:700;font-size:14px;letter-spacing:.08em;text-transform:uppercase;background:var(--acc);color:#fff;padding:1px 8px;margin-bottom:6px}

@@ -16,12 +16,16 @@ const QUIZ = [
 ];
 
 const TASKS = [
-  { shape: [[0, 1], [1, 0], [4, 0], [4, 4], [0, 4]], from: '1:2', to: '1:1', factor: 2, factorText: 'doppelt so groß', size: [4, 4],
-    note: 'Die Vorlage ist im Maßstab <b>1:2</b> gezeichnet – also <b>halb so groß</b> wie das echte Bauteil. Zeichne es im Maßstab <b>1:1</b> (echte Größe).' },
-  { shape: [[0, 0], [8, 0], [8, 6], [4, 8], [0, 6]], from: '1:1', to: '1:2', factor: 0.5, factorText: 'halb so groß', size: [8, 8],
-    note: 'Die Vorlage ist im Maßstab <b>1:1</b> gezeichnet – so groß wie in echt. Zeichne das Bauteil im Maßstab <b>1:2</b>.' },
-  { shape: [[0, 0], [9, 0], [9, 9], [0, 9]], from: '3:1', to: '1:1', factor: 1 / 3, factorText: 'ein Drittel so groß', size: [9, 9],
-    note: 'Die Vorlage ist im Maßstab <b>3:1</b> gezeichnet – also <b>dreimal so groß</b> wie in echt. Zeichne das Bauteil im Maßstab <b>1:1</b>.' },
+  // Größen so gewählt, dass Vorlage und Lösung nebeneinander aufs gleiche Kästchenpapier passen
+  { shape: [[0, 1], [1, 0], [3, 0], [3, 3], [0, 3]], from: '1:2', to: '1:1', factor: 2, factorText: 'doppelt so groß', size: [3, 3],
+    ruleShort: 'jede Länge mal 2', ruleEasy: 'Von 1:2 auf 1:1 heißt: <b>doppelt so groß</b>. Aus <b>1</b> Kästchen werden <b>2</b>, aus <b>3</b> werden <b>6</b>.',
+    note: 'Die Vorlage ist im Maßstab <b>1:2</b> gezeichnet – also <b>halb so groß</b> wie das echte Bauteil. Zeichne es rechts im Maßstab <b>1:1</b> (echte Größe).' },
+  { shape: [[0, 0], [8, 0], [8, 4], [4, 6], [0, 4]], from: '1:1', to: '1:2', factor: 0.5, factorText: 'halb so groß', size: [8, 6],
+    ruleShort: 'jede Länge durch 2', ruleEasy: 'Von 1:1 auf 1:2 heißt: <b>halb so groß</b>. Aus <b>8</b> Kästchen werden <b>4</b>, aus <b>4</b> werden <b>2</b>.',
+    note: 'Die Vorlage ist im Maßstab <b>1:1</b> gezeichnet – so groß wie in echt. Zeichne das Bauteil rechts im Maßstab <b>1:2</b>.' },
+  { shape: [[0, 0], [6, 0], [6, 3], [3, 3], [3, 6], [0, 6]], from: '3:1', to: '1:1', factor: 1 / 3, factorText: 'ein Drittel so groß', size: [6, 6],
+    ruleShort: 'jede Länge durch 3', ruleEasy: 'Von 3:1 auf 1:1 heißt: <b>dreimal kleiner</b>. Aus <b>6</b> Kästchen werden <b>2</b>, aus <b>3</b> wird <b>1</b>.',
+    note: 'Die Vorlage ist im Maßstab <b>3:1</b> gezeichnet – also <b>dreimal so groß</b> wie in echt. Zeichne das Bauteil rechts im Maßstab <b>1:1</b>.' },
 ];
 
 export default {
@@ -49,7 +53,8 @@ export default {
           ctx.hideFeedback();
         } else {
           wrong++; btns[k].classList.add('bad');
-          ctx.feedback({ kind: 'bad', title: 'Nicht ganz', text: 'Tipp: <b>Erste Zahl = Zeichnung</b>, zweite Zahl = Wirklichkeit. Ist die erste Zahl größer, ist die Zeichnung vergrößert.' });
+          ctx.feedback({ kind: 'bad', title: 'Nicht ganz', text: 'Tipp: <b>Erste Zahl = Zeichnung</b>, zweite Zahl = Wirklichkeit. Ist die erste Zahl größer, ist die Zeichnung vergrößert.',
+            easy: 'Lies den Maßstab wie einen Satz: <b>1:10</b> heißt „<b>1</b> cm auf dem Papier sind <b>10</b> cm in echt“. Die <b>erste</b> Zahl gehört immer zum <b>Papier</b>, die <b>zweite</b> zum <b>echten Teil</b>.' });
         }
       } }, o));
       box.append(h('div', { class: 'q', html: q }), h('div', { class: 'opts' }, btns));
@@ -65,12 +70,12 @@ export default {
       root.append(h('div', { class: 'task' }, h('span', { class: 'lbl' }, `Bauteil ${i + 1}/3`), h('span', { html: t.note })));
       const g = gridTask(root, ctx, {
         tplTitle: `Vorlage · Maßstab ${t.from}`,
-        template: { cols: 11, rows: 11, ox: 1, oy: 1, wide: [t.shape] },
-        tplNote: `Gesucht: Maßstab <b>${t.to}</b> → ${t.factorText}`,
-        padCols: 14, padRows: 14, cell: 26,
+        drawTitle: `Deine Zeichnung · Maßstab ${t.to}`,
+        template: { wide: [t.shape], ext: [0, 0, t.size[0], t.size[1]] },
+        tplCols: 10, drawCols: 10, rows: 10, cell: 40,
         styles: ['wide'],
         expected: { wide: [target] },
-        factor: t.factor, factorText: t.factorText, origSize: t.size,
+        factor: t.factor, factorText: t.factorText, origSize: t.size, ruleShort: t.ruleShort, ruleEasy: t.ruleEasy,
         success: st => {
           starsSum += st;
           if (i + 1 < TASKS.length) {

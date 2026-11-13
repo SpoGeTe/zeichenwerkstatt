@@ -12,20 +12,20 @@ const DRAW = `
   <text class="dim" transform="translate(194,305) rotate(-90)" style="font-size:18px">23</text>`;
 
 const PAIRS = [
-  { k: 'tl', x: 20, y: 40, lead: [200, 240], line: 'schmal', use: 'bemass', desc: 'die dünne Maßlinie mit den Pfeilen' },
-  { k: 'tr', x: 470, y: 40, lead: [440, 252], line: 'strich', use: 'unsicht', desc: 'eine gestrichelte Linie im Werkstück' },
-  { k: 'bl', x: 20, y: 455, lead: [300, 295], line: 'punkt', use: 'mitte', desc: 'die Linie aus langen Strichen und Punkten in der Mitte' },
-  { k: 'br', x: 470, y: 455, lead: [470, 400], line: 'breit', use: 'sicht', desc: 'den dicken Rand des Werkstücks' },
+  { k: 'tl', x: 20, y: 40, lead: [200, 240], line: 'schmal', use: 'bemass', desc: 'die dünne Maßlinie mit den Pfeilen', easy: 'eine <b>dünne, durchgehende</b> Linie mit Pfeilen. Sie gehört zum Maß 23' },
+  { k: 'tr', x: 470, y: 40, lead: [440, 252], line: 'strich', use: 'unsicht', desc: 'eine gestrichelte Linie im Werkstück', easy: 'eine Linie aus <b>kurzen Strichen mit Lücken</b>' },
+  { k: 'bl', x: 20, y: 455, lead: [300, 295], line: 'punkt', use: 'mitte', desc: 'die Linie aus langen Strichen und Punkten in der Mitte', easy: 'die Linie <b>genau in der Mitte</b>: langer Strich – Punkt – langer Strich' },
+  { k: 'br', x: 470, y: 455, lead: [470, 400], line: 'breit', use: 'sicht', desc: 'den dicken Rand des Werkstücks', easy: 'den <b>dicken Rand</b> des Teils' },
 ];
 const CHIPS = [
-  { id: 'strich', label: 'Strichlinie', rule: 'Viele kurze Striche mit Lücken – für Kanten, die man <b>nicht sehen</b> kann.' },
-  { id: 'breit', label: 'breite Volllinie', rule: 'Dick und durchgehend – für alle <b>sichtbaren</b> Kanten.' },
-  { id: 'schmal', label: 'schmale Volllinie', rule: 'Dünn und durchgehend – für Maßlinien und Maßhilfslinien.' },
-  { id: 'punkt', label: 'Strichpunktlinie', rule: 'Langer Strich, Punkt, langer Strich – sie zeigt die <b>Mitte</b> eines Werkstücks.' },
-  { id: 'unsicht', label: 'unsichtbare Kante', rule: 'Kanten, die im Inneren oder hinten liegen, zeichnet man mit der <b>Strichlinie</b>.' },
-  { id: 'sicht', label: 'sichtbare Kante', rule: 'Was man von außen sieht, wird mit der <b>breiten Volllinie</b> gezeichnet.' },
-  { id: 'bemass', label: 'Bemaßungslinie', rule: 'Maße zeichnet man mit der <b>schmalen Volllinie</b>.' },
-  { id: 'mitte', label: 'Mittellinie', rule: 'Die Mitte zeigt man mit der <b>Strichpunktlinie</b>.' },
+  { id: 'strich', label: 'Strichlinie', rule: 'Viele kurze Striche mit Lücken – für Kanten, die man <b>nicht sehen</b> kann.', easy: 'Striche mit Lücken: – – – –' },
+  { id: 'breit', label: 'breite Volllinie', rule: 'Dick und durchgehend – für alle <b>sichtbaren</b> Kanten.', easy: 'eine <b>dicke</b> Linie ohne Lücken.' },
+  { id: 'schmal', label: 'schmale Volllinie', rule: 'Dünn und durchgehend – für Maßlinien und Maßhilfslinien.', easy: 'eine <b>dünne</b> Linie ohne Lücken.' },
+  { id: 'punkt', label: 'Strichpunktlinie', rule: 'Langer Strich, Punkt, langer Strich – sie zeigt die <b>Mitte</b> eines Werkstücks.', easy: 'Strich, Punkt, Strich, Punkt: — · — · —' },
+  { id: 'unsicht', label: 'unsichtbare Kante', rule: 'Kanten, die im Inneren oder hinten liegen, zeichnet man mit der <b>Strichlinie</b>.', easy: 'eine Kante, die man <b>nicht sehen</b> kann, weil sie innen oder hinten liegt. Dafür nimmt man Striche mit Lücken.' },
+  { id: 'sicht', label: 'sichtbare Kante', rule: 'Was man von außen sieht, wird mit der <b>breiten Volllinie</b> gezeichnet.', easy: 'eine Kante, die man <b>sehen</b> kann. Dafür nimmt man eine dicke Linie.' },
+  { id: 'bemass', label: 'Bemaßungslinie', rule: 'Maße zeichnet man mit der <b>schmalen Volllinie</b>.', easy: 'eine Linie, die zeigt, <b>wie lang</b> etwas ist. Dafür nimmt man eine dünne Linie.' },
+  { id: 'mitte', label: 'Mittellinie', rule: 'Die Mitte zeigt man mit der <b>Strichpunktlinie</b>.', easy: 'eine Linie, die die <b>Mitte</b> zeigt. Dafür nimmt man Strich – Punkt – Strich.' },
 ];
 
 export default {
@@ -38,8 +38,8 @@ export default {
     const slots = [];
     let labels = '';
     for (const p of PAIRS) {
-      slots.push({ id: p.k + '1', x: p.x, y: p.y, w: 190, lead: p.y > 300 ? p.lead : null, answer: p.line, desc: p.desc });
-      slots.push({ id: p.k + '2', x: p.x, y: p.y + 46, w: 190, lead: p.y > 300 ? null : p.lead, answer: p.use, desc: p.desc });
+      slots.push({ id: p.k + '1', x: p.x, y: p.y, w: 190, lead: p.y > 300 ? p.lead : null, answer: p.line, desc: p.desc, easy: p.easy });
+      slots.push({ id: p.k + '2', x: p.x, y: p.y + 46, w: 190, lead: p.y > 300 ? null : p.lead, answer: p.use, desc: p.desc, easy: p.easy });
       labels += `<rect x="${p.x - 8}" y="${p.y - 8}" width="206" height="102" rx="12" fill="none" stroke="var(--soft)" stroke-width="1.5"/>`;
     }
     const left = h('div', { style: { display: 'flex', minHeight: '0' } });

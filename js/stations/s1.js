@@ -2,19 +2,19 @@ import { h, svg, shuffle, shake, dnd } from '../ui.js';
 import { techDrawing, sketchDrawing } from '../drawings.js';
 
 const CARDS = [
-  ['Wird frei aus der Hand gezeichnet.', 'S', 'Für eine Skizze braucht man meist kein Lineal – man zeichnet sie einfach frei aus der Hand.'],
-  ['Wird mit Lineal und Geodreieck gezeichnet.', 'T', 'Bei der Technischen Zeichnung müssen die Linien ganz gerade sein – deshalb braucht man ein Lineal.'],
-  ['Die Linien dürfen etwas krumm sein.', 'S', 'Bei einer Skizze müssen die Linien nicht ganz gerade sein.'],
-  ['Muss ganz genau sein.', 'T', 'Nach einer Technischen Zeichnung wird gebaut – deshalb muss sie ganz genau sein.'],
-  ['Ist schnell gemacht – gut, um eine Idee festzuhalten.', 'S', 'Hat man eine Idee, kann man sie mit einer Skizze schnell aufs Papier bringen.'],
-  ['Braucht deutlich mehr Zeit.', 'T', 'Eine Technische Zeichnung ist viel aufwendiger als eine Skizze.'],
-  ['Enthält alle nötigen Maße.', 'T', 'Nur wenn alle Maße angegeben sind, kann man das Werkstück herstellen.'],
-  ['Nicht alle Maße müssen angegeben sein.', 'S', 'Bei der Skizze reichen die wichtigsten Maße.'],
-  ['Details dürfen weggelassen oder vereinfacht werden.', 'S', 'Eine Skizze muss nicht vollständig sein.'],
-  ['Enthält Material und alle Details zum Bauteil.', 'T', 'In der Technischen Zeichnung steht alles, was man zum Bauen wissen muss – auch das Material.'],
-  ['Wird in Normschrift beschriftet.', 'T', 'Für Technische Zeichnungen gibt es eine bestimmte Schrift: die Normschrift. So kann sie jeder lesen.'],
-  ['Danach kann man ein Werkstück fertigen oder zusammenbauen.', 'T', 'Genau dafür ist die Technische Zeichnung da: als genaue Beschreibung zum Herstellen.'],
-  ['Die angegebenen Maße müssen stimmen.', 'B', 'Bei beiden gilt: Wenn ein Maß angegeben wird, muss es korrekt sein – auch bei der Skizze.'],
+  ['Wird frei aus der Hand gezeichnet.', 'S', 'Für eine Skizze braucht man meist kein Lineal – man zeichnet sie einfach frei aus der Hand.', 'Frei aus der Hand heißt: <b>ohne Lineal</b>. Das macht man, wenn es <b>schnell</b> gehen soll – also bei der Skizze.'],
+  ['Wird mit Lineal und Geodreieck gezeichnet.', 'T', 'Bei der Technischen Zeichnung müssen die Linien ganz gerade sein – deshalb braucht man ein Lineal.', 'Mit Lineal wird alles <b>ganz gerade und genau</b>. Das braucht man für die Technische Zeichnung.'],
+  ['Die Linien dürfen etwas krumm sein.', 'S', 'Bei einer Skizze müssen die Linien nicht ganz gerade sein.', 'Krumme Linien sind okay, wenn es <b>schnell</b> gehen soll. Das ist bei der Skizze so.'],
+  ['Muss ganz genau sein.', 'T', 'Nach einer Technischen Zeichnung wird gebaut – deshalb muss sie ganz genau sein.', 'Wer etwas <b>bauen</b> will, braucht einen ganz genauen Plan. Das ist die Technische Zeichnung.'],
+  ['Ist schnell gemacht – gut, um eine Idee festzuhalten.', 'S', 'Hat man eine Idee, kann man sie mit einer Skizze schnell aufs Papier bringen.', 'Eine Idee schnell aufmalen, bevor man sie vergisst – dafür ist die Skizze da.'],
+  ['Braucht deutlich mehr Zeit.', 'T', 'Eine Technische Zeichnung ist viel aufwendiger als eine Skizze.', 'Genau zeichnen dauert <b>lange</b>. Die Technische Zeichnung ist genau – also dauert sie länger.'],
+  ['Enthält alle nötigen Maße.', 'T', 'Nur wenn alle Maße angegeben sind, kann man das Werkstück herstellen.', '<b>Alle</b> Maße braucht man nur, wenn man das Teil wirklich bauen will. Das geht mit der Technischen Zeichnung.'],
+  ['Nicht alle Maße müssen angegeben sein.', 'S', 'Bei der Skizze reichen die wichtigsten Maße.', 'Wenn ein paar Maße fehlen dürfen, ist es nur ein schneller Entwurf – eine Skizze.'],
+  ['Details dürfen weggelassen oder vereinfacht werden.', 'S', 'Eine Skizze muss nicht vollständig sein.', 'Kleine Teile weglassen ist erlaubt, wenn es nur ein schneller Entwurf ist – eine Skizze.'],
+  ['Enthält Material und alle Details zum Bauteil.', 'T', 'In der Technischen Zeichnung steht alles, was man zum Bauen wissen muss – auch das Material.', 'Wenn sogar das <b>Material</b> draufsteht, ist es ein kompletter Bauplan – eine Technische Zeichnung.'],
+  ['Wird in Normschrift beschriftet.', 'T', 'Für Technische Zeichnungen gibt es eine bestimmte Schrift: die Normschrift. So kann sie jeder lesen.', 'Normschrift ist eine <b>besondere, ordentliche Schrift</b>. Die benutzt man in Technischen Zeichnungen.'],
+  ['Danach kann man ein Werkstück fertigen oder zusammenbauen.', 'T', 'Genau dafür ist die Technische Zeichnung da: als genaue Beschreibung zum Herstellen.', 'Etwas <b>bauen</b> kann man nur mit einem genauen Plan – der Technischen Zeichnung.'],
+  ['Die angegebenen Maße müssen stimmen.', 'B', 'Bei beiden gilt: Wenn ein Maß angegeben wird, muss es korrekt sein – auch bei der Skizze.', 'Eine falsche Zahl hilft nie – egal ob Skizze oder Technische Zeichnung. Das gilt also für <b>beide</b>.'],
 ];
 const BIN = { S: 'Skizze', B: 'Beide', T: 'Technische Zeichnung' };
 
@@ -49,7 +49,7 @@ export default {
     }
 
     function drop(chipId, target, chipEl) {
-      const [text, right, why] = deck[+chipId];
+      const [text, right, why, easy] = deck[+chipId];
       if (target === right) {
         sorted[right].push(text);
         bins[right].querySelector('ul').append(h('li', {}, text));
@@ -59,7 +59,8 @@ export default {
         mistakes++;
         shake(chipEl);
         const hint = right === 'B' ? 'Das gilt für <b>beide</b> Arten von Zeichnungen.' : `Das passt zur <b>${BIN[right]}</b>.`;
-        ctx.feedback({ kind: 'bad', title: 'Nicht ganz', text: `${hint} ${why}` });
+        ctx.feedback({ kind: 'bad', title: 'Nicht ganz', text: `${hint} ${why}`,
+          easy: `${easy}<br><br><b>Merk dir:</b> Skizze = schnell und frei Hand. Technische Zeichnung = genau, mit Lineal, zum Bauen.` });
         // Karte bleibt liegen – noch einmal versuchen
       }
     }
